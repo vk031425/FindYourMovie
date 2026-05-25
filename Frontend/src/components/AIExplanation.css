@@ -1,0 +1,86 @@
+.ai-explanation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 32px;
+  margin: 32px 0;
+  animation: fadeInUp 0.5s ease both;
+  animation-delay: 0.2s;
+  gap: 24px;
+}
+
+.ai-explanation__content {
+  flex: 1;
+}
+
+.ai-explanation__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ai-explanation__sparkle-icon {
+  color: var(--red);
+}
+
+.ai-explanation__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ai-explanation__text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  max-width: 580px;
+}
+
+/* Robot */
+.ai-explanation__robot {
+  position: relative;
+  flex-shrink: 0;
+  animation: float 3s ease-in-out infinite;
+}
+
+.ai-explanation__robot-svg {
+  display: block;
+}
+
+/* Sparks */
+.ai-explanation__sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.spark {
+  position: absolute;
+  color: var(--red);
+  font-size: 12px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.spark--1 {
+  top: 0;
+  right: 10px;
+  animation-delay: 0s;
+}
+
+.spark--2 {
+  top: 20px;
+  right: -8px;
+  animation-delay: 0.5s;
+  color: #4fc3f7;
+}
+
+.spark--3 {
+  bottom: 12px;
+  right: 2px;
+  animation-delay: 1s;
+  color: #4caf50;
+}

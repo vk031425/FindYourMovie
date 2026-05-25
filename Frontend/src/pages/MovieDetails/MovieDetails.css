@@ -1,0 +1,312 @@
+.movie-details {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* BACKDROP */
+
+.movie-details__backdrop {
+  position: absolute;
+  inset: 0;
+
+  height: 520px;
+
+  background-size: cover;
+  background-position: center;
+
+  filter: brightness(0.35);
+
+  z-index: 0;
+}
+
+.movie-details__backdrop-overlay {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.2),
+      rgba(13,13,13,0.96)
+    );
+}
+
+/* CONTENT */
+
+.movie-details__content {
+  position: relative;
+  z-index: 2;
+
+  max-width: 1280px;
+
+  margin: 0 auto;
+
+  padding:
+    120px 48px 80px;
+
+  display: flex;
+  gap: 48px;
+}
+
+/* LEFT */
+
+.movie-details__left {
+  flex-shrink: 0;
+}
+
+.movie-details__poster {
+  width: 320px;
+
+  border-radius: 24px;
+
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.5);
+
+  transition: transform 0.3s ease;
+}
+
+.movie-details__poster:hover {
+  transform: scale(1.02);
+}
+
+/* RIGHT */
+
+.movie-details__right {
+  flex: 1;
+}
+
+/* TITLE */
+
+.movie-details__title {
+  font-size: 56px;
+  font-weight: 800;
+
+  line-height: 1.1;
+
+  margin-bottom: 20px;
+}
+
+/* META */
+
+.movie-details__meta {
+  display: flex;
+  gap: 18px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 24px;
+
+  color: var(--text-muted);
+
+  font-size: 15px;
+}
+
+.movie-details__meta span {
+  background: rgba(255,255,255,0.05);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  padding: 8px 14px;
+
+  border-radius: 999px;
+}
+
+/* GENRES */
+
+.movie-details__genres {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 12px;
+
+  margin-bottom: 36px;
+}
+
+.movie-details__genre {
+  background: rgba(229, 9, 20, 0.12);
+
+  color: #ff4d5a;
+
+  border: 1px solid rgba(229, 9, 20, 0.35);
+
+  padding: 10px 16px;
+
+  border-radius: 999px;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+/* SECTIONS */
+
+.movie-details__section {
+  margin-bottom: 36px;
+}
+
+.movie-details__section h2 {
+  font-size: 28px;
+
+  margin-bottom: 14px;
+
+  font-weight: 700;
+}
+
+.movie-details__section p {
+  color: var(--text-muted);
+
+  line-height: 1.9;
+
+  font-size: 16px;
+}
+
+/* EXTRA INFO */
+
+.movie-details__extra {
+  display: flex;
+  gap: 18px;
+
+  flex-wrap: wrap;
+
+  margin-top: 50px;
+}
+
+.movie-details__extra-card {
+  background: var(--card-bg);
+
+  border: 1px solid var(--border);
+
+  border-radius: 20px;
+
+  padding: 24px;
+
+  min-width: 180px;
+
+  transition: var(--transition);
+}
+
+.movie-details__extra-card:hover {
+  transform: translateY(-4px);
+
+  border-color: rgba(255,255,255,0.12);
+}
+
+.movie-details__extra-card h3 {
+  font-size: 14px;
+
+  color: var(--text-muted);
+
+  margin-bottom: 10px;
+}
+
+.movie-details__extra-card p {
+  font-size: 22px;
+
+  font-weight: 700;
+}
+
+/* BUTTON */
+
+.movie-details__back-btn {
+  margin-top: 50px;
+
+  background: var(--red);
+
+  color: white;
+
+  padding: 16px 26px;
+
+  border-radius: 14px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  transition: var(--transition);
+}
+
+.movie-details__back-btn:hover {
+  background: var(--red-hover);
+
+  transform: translateY(-2px);
+}
+
+/* NOT FOUND */
+
+.movie-details__notfound {
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 24px;
+
+  background: var(--bg);
+
+  color: white;
+}
+
+.movie-details__notfound button {
+  background: var(--red);
+
+  color: white;
+
+  padding: 14px 24px;
+
+  border-radius: 12px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 992px) {
+
+  .movie-details__content {
+    flex-direction: column;
+
+    padding:
+      100px 24px 60px;
+  }
+
+  .movie-details__poster {
+    width: 260px;
+  }
+
+  .movie-details__title {
+    font-size: 42px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .movie-details__content {
+    padding:
+      90px 20px 50px;
+  }
+
+  .movie-details__title {
+    font-size: 34px;
+  }
+
+  .movie-details__poster {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .movie-details__section h2 {
+    font-size: 24px;
+  }
+
+  .movie-details__extra {
+    flex-direction: column;
+  }
+
+  .movie-details__extra-card {
+    width: 100%;
+  }
+}

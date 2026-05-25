@@ -1,0 +1,136 @@
+/* GOOGLE FONT */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* CSS VARIABLES */
+
+:root {
+
+  --bg: #0d0d0d;
+
+  --bg-secondary: #151515;
+
+  --card-bg: #1b1b1b;
+
+  --border: #2a2a2a;
+
+  --text: #ffffff;
+
+  --text-muted: #9ca3af;
+
+  --red: #e50914;
+
+  --red-hover: #ff1f2d;
+
+  --star: #f5c518;
+
+  --shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35);
+
+  --radius: 18px;
+
+  --transition: 0.25s ease;
+
+  --font-body: 'Inter', sans-serif;
+}
+
+/* GLOBAL RESET */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* HTML + BODY */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+
+  font-family: var(--font-body);
+
+  background: var(--bg);
+
+  color: var(--text);
+
+  overflow-x: hidden;
+
+  min-height: 100vh;
+
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ROOT */
+
+#root {
+  min-height: 100vh;
+}
+
+/* GLOBAL ELEMENTS */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+input {
+  font-family: inherit;
+  outline: none;
+}
+
+img {
+  display: block;
+  width: 100%;
+}
+
+/* SCROLLBAR */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* SELECTION */
+
+::selection {
+  background: var(--red);
+  color: white;
+}
+
+/* UTILITY */
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+  body {
+    overflow-x: hidden;
+  }
+}

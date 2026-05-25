@@ -1,0 +1,221 @@
+.hero {
+  position: relative;
+  min-height: 540px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 100px 48px 60px;
+}
+
+/* Poster strip on right */
+.hero__posters {
+  position: absolute;
+  top: 0;
+  right: -20px;
+  bottom: 0;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding-top: 10px;
+  pointer-events: none;
+}
+
+.hero__poster {
+  width: 140px;
+  flex-shrink: 0;
+  height: 110%;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 20px;
+  gap: 8px;
+  animation: fadeIn 0.6s ease both;
+  transform: rotate(-3deg);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+}
+
+.hero__poster:nth-child(even) {
+  transform: rotate(2deg) translateY(-12px);
+}
+.hero__poster:nth-child(3) {
+  transform: rotate(-1deg) translateY(8px);
+}
+
+.hero__poster-emoji {
+  font-size: 52px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+}
+
+.hero__poster-label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* Dark overlay gradient */
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    #0a0a0a 0%,
+    #0a0a0a 45%,
+    rgba(10,10,10,0.7) 65%,
+    rgba(10,10,10,0.1) 100%
+  );
+  pointer-events: none;
+}
+
+/* Content */
+.hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: 680px;
+  animation: fadeInUp 0.7s ease both;
+}
+
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--red);
+  letter-spacing: 0.3px;
+  margin-bottom: 20px;
+}
+
+.hero__title {
+  font-family: var(--font-body);
+  font-size: clamp(36px, 5vw, 58px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.hero__title-accent {
+  color: var(--red);
+}
+
+.hero__subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+/* Search */
+.hero__search {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.hero__search-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0 20px;
+  height: 54px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.hero__search-bar:focus-within {
+  border-color: rgba(229, 0, 26, 0.4);
+  background: rgba(255,255,255,0.08);
+}
+
+.hero__search-bar svg {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.hero__input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-family: var(--font-body);
+}
+
+.hero__input::placeholder {
+  color: var(--text-muted);
+}
+
+.hero__search-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 28px;
+  height: 54px;
+  border-radius: var(--radius);
+  background: var(--red);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(229,0,26,0.35);
+}
+
+.hero__search-btn:hover {
+  background: var(--red-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 28px rgba(229,0,26,0.5);
+}
+
+.hero__search-btn:active {
+  transform: translateY(0);
+}
+
+/* Suggestions */
+.hero__suggestions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hero__try {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-right: 4px;
+}
+
+.hero__chip {
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-family: var(--font-body);
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.hero__chip:hover {
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+  background: rgba(255,255,255,0.08);
+}

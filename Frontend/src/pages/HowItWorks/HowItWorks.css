@@ -1,0 +1,312 @@
+.how-it-works {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* HERO */
+
+.how-it-works__hero {
+  padding:
+    120px 48px 80px;
+
+  border-bottom:
+    1px solid var(--border);
+
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(229, 9, 20, 0.15),
+      transparent 55%
+    );
+}
+
+.how-it-works__hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.how-it-works__hero h1 {
+  font-size: 64px;
+  font-weight: 800;
+
+  line-height: 1.1;
+
+  margin-bottom: 24px;
+}
+
+.how-it-works__hero p {
+  font-size: 20px;
+
+  line-height: 1.8;
+
+  color: var(--text-muted);
+}
+
+/* CONTAINER */
+
+.how-it-works__container {
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding:
+    80px 48px;
+}
+
+/* SECTION */
+
+.how-it-works__section {
+  display: flex;
+
+  gap: 48px;
+
+  margin-bottom: 90px;
+
+  align-items: flex-start;
+}
+
+/* NUMBER */
+
+.how-it-works__number {
+  font-size: 72px;
+
+  font-weight: 800;
+
+  color: rgba(229, 9, 20, 0.2);
+
+  min-width: 120px;
+}
+
+/* INFO */
+
+.how-it-works__info h2 {
+  font-size: 36px;
+
+  margin-bottom: 20px;
+}
+
+.how-it-works__info p {
+  color: var(--text-muted);
+
+  font-size: 17px;
+
+  line-height: 1.9;
+
+  margin-bottom: 18px;
+}
+
+/* EXAMPLES */
+
+.how-it-works__examples {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 14px;
+
+  margin-top: 24px;
+}
+
+.how-it-works__examples span {
+  background:
+    rgba(255,255,255,0.04);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  padding:
+    12px 18px;
+
+  border-radius: 999px;
+
+  font-size: 14px;
+
+  color: var(--text);
+}
+
+/* QUOTE */
+
+.how-it-works__quote {
+  margin-top: 28px;
+
+  padding: 24px;
+
+  background:
+    rgba(229, 9, 20, 0.08);
+
+  border-left:
+    4px solid var(--red);
+
+  border-radius: 16px;
+
+  color: white;
+
+  line-height: 1.8;
+
+  font-size: 16px;
+}
+
+/* ARCHITECTURE */
+
+.how-it-works__architecture {
+  margin-top: 120px;
+}
+
+.how-it-works__architecture h2 {
+  font-size: 42px;
+
+  margin-bottom: 50px;
+
+  text-align: center;
+}
+
+/* FLOW */
+
+.how-it-works__flow {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 18px;
+}
+
+.how-it-works__flow-card {
+  width: 100%;
+  max-width: 500px;
+
+  background: var(--card-bg);
+
+  border:
+    1px solid var(--border);
+
+  padding:
+    24px 32px;
+
+  border-radius: 20px;
+
+  text-align: center;
+
+  font-size: 18px;
+
+  font-weight: 600;
+
+  transition: var(--transition);
+}
+
+.how-it-works__flow-card:hover {
+  transform: translateY(-4px);
+
+  border-color:
+    rgba(255,255,255,0.15);
+}
+
+.how-it-works__arrow {
+  font-size: 32px;
+
+  color: var(--red);
+}
+
+/* TECH STACK */
+
+.how-it-works__tech {
+  margin-top: 120px;
+}
+
+.how-it-works__tech h2 {
+  font-size: 42px;
+
+  margin-bottom: 40px;
+
+  text-align: center;
+}
+
+/* TECH GRID */
+
+.how-it-works__tech-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(220px, 1fr));
+
+  gap: 24px;
+}
+
+.how-it-works__tech-card {
+  background: var(--card-bg);
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 20px;
+
+  padding:
+    28px;
+
+  text-align: center;
+
+  font-size: 18px;
+
+  font-weight: 600;
+
+  transition: var(--transition);
+}
+
+.how-it-works__tech-card:hover {
+  transform: translateY(-5px);
+
+  border-color:
+    rgba(229, 9, 20, 0.5);
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.35);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 992px) {
+
+  .how-it-works__section {
+    flex-direction: column;
+  }
+
+  .how-it-works__number {
+    font-size: 54px;
+  }
+
+  .how-it-works__hero h1 {
+    font-size: 52px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .how-it-works__hero {
+    padding:
+      100px 20px 70px;
+  }
+
+  .how-it-works__container {
+    padding:
+      70px 20px;
+  }
+
+  .how-it-works__hero h1 {
+    font-size: 40px;
+  }
+
+  .how-it-works__hero p {
+    font-size: 17px;
+  }
+
+  .how-it-works__info h2 {
+    font-size: 30px;
+  }
+
+  .how-it-works__architecture h2,
+  .how-it-works__tech h2 {
+    font-size: 34px;
+  }
+}

@@ -1,0 +1,319 @@
+.about {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* HERO */
+
+.about__hero {
+  padding:
+    120px 48px 80px;
+
+  border-bottom:
+    1px solid var(--border);
+
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(229, 9, 20, 0.14),
+      transparent 55%
+    );
+}
+
+.about__hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.about__hero h1 {
+  font-size: 64px;
+  font-weight: 800;
+
+  line-height: 1.1;
+
+  margin-bottom: 24px;
+}
+
+.about__hero p {
+  font-size: 20px;
+
+  line-height: 1.8;
+
+  color: var(--text-muted);
+}
+
+/* CONTAINER */
+
+.about__container {
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  padding:
+    80px 48px;
+}
+
+/* SECTION */
+
+.about__section {
+  margin-bottom: 100px;
+}
+
+.about__section h2 {
+  font-size: 42px;
+
+  margin-bottom: 28px;
+
+  font-weight: 700;
+}
+
+.about__section p {
+  color: var(--text-muted);
+
+  line-height: 1.9;
+
+  font-size: 17px;
+
+  margin-bottom: 18px;
+}
+
+/* EXAMPLES */
+
+.about__examples {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 14px;
+
+  margin-top: 30px;
+}
+
+.about__examples span {
+  background:
+    rgba(255,255,255,0.04);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  padding:
+    12px 18px;
+
+  border-radius: 999px;
+
+  font-size: 14px;
+}
+
+/* FEATURES */
+
+.about__features {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(260px, 1fr));
+
+  gap: 28px;
+}
+
+.about__feature-card {
+  background: var(--card-bg);
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 22px;
+
+  padding: 32px;
+
+  transition: var(--transition);
+}
+
+.about__feature-card:hover {
+  transform: translateY(-6px);
+
+  border-color:
+    rgba(229, 9, 20, 0.45);
+
+  box-shadow:
+    0 12px 32px rgba(0,0,0,0.35);
+}
+
+.about__feature-card h3 {
+  font-size: 22px;
+
+  margin-bottom: 16px;
+}
+
+.about__feature-card p {
+  margin-bottom: 0;
+}
+
+/* TECH GRID */
+
+.about__tech-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(220px, 1fr));
+
+  gap: 24px;
+}
+
+.about__tech-card {
+  background: var(--card-bg);
+
+  border:
+    1px solid var(--border);
+
+  border-radius: 20px;
+
+  padding:
+    26px;
+
+  text-align: center;
+
+  font-size: 18px;
+
+  font-weight: 600;
+
+  transition: var(--transition);
+}
+
+.about__tech-card:hover {
+  transform: translateY(-5px);
+
+  border-color:
+    rgba(255,255,255,0.15);
+}
+
+/* AI CONCEPTS */
+
+.about__concepts {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(280px, 1fr));
+
+  gap: 28px;
+}
+
+.about__concept-card {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,0.03),
+      rgba(255,255,255,0.01)
+    );
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  border-radius: 24px;
+
+  padding: 34px;
+}
+
+.about__concept-card h3 {
+  font-size: 24px;
+
+  margin-bottom: 18px;
+}
+
+.about__concept-card p {
+  margin-bottom: 0;
+}
+
+/* FOOTER MESSAGE */
+
+.about__footer-message {
+  text-align: center;
+
+  padding:
+    80px 40px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(229, 9, 20, 0.12),
+      rgba(255,255,255,0.02)
+    );
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  border-radius: 28px;
+}
+
+.about__footer-message h2 {
+  font-size: 44px;
+
+  margin-bottom: 24px;
+}
+
+.about__footer-message p {
+  max-width: 850px;
+
+  margin: 0 auto;
+
+  color: var(--text-muted);
+
+  line-height: 1.9;
+
+  font-size: 18px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 992px) {
+
+  .about__hero h1 {
+    font-size: 52px;
+  }
+
+  .about__section h2 {
+    font-size: 36px;
+  }
+
+  .about__footer-message h2 {
+    font-size: 38px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .about__hero {
+    padding:
+      100px 20px 70px;
+  }
+
+  .about__container {
+    padding:
+      70px 20px;
+  }
+
+  .about__hero h1 {
+    font-size: 40px;
+  }
+
+  .about__hero p {
+    font-size: 17px;
+  }
+
+  .about__section h2 {
+    font-size: 30px;
+  }
+
+  .about__footer-message {
+    padding:
+      60px 24px;
+  }
+
+  .about__footer-message h2 {
+    font-size: 32px;
+  }
+
+  .about__footer-message p {
+    font-size: 16px;
+  }
+}
