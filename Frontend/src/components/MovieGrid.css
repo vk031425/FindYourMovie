@@ -24,7 +24,7 @@
 .movie-grid__title {
   font-size: 24px;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text);
   letter-spacing: -0.5px;
 }
 
@@ -47,7 +47,7 @@
   border-radius: 50%;
   border: 1px solid var(--border);
   background: var(--bg-card);
-  color: var(--text-secondary);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,8 +55,8 @@
 }
 
 .movie-grid__nav-btn:hover {
-  color: var(--text-primary);
-  border-color: var(--border-hover);
+  color: var(--text);
+  border-color: #3a3a3a;
   background: var(--bg-card-hover);
 }
 

@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import db from "./services/astraClient.js";
 import getEmbedding from "./services/embeddingService.js";
 import generateMovieExplanation from "./services/geminiService.js";
+import processChatMessage from "./services/chatService.js";
 
 dotenv.config();
 
@@ -18,15 +19,12 @@ const collection = db.collection("movies");
 // SEMANTIC SEARCH API
 
 app.post("/search", async (req, res) => {
-
   try {
-
     const { query } = req.body;
 
     // VALIDATION
 
     if (!query) {
-
       return res.status(400).json({
         error: "Query is required",
       });
@@ -47,7 +45,7 @@ app.post("/search", async (req, res) => {
           $vector: queryEmbedding,
         },
         limit: 10,
-      }
+      },
     );
 
     // CONVERT CURSOR TO ARRAY
@@ -56,10 +54,7 @@ app.post("/search", async (req, res) => {
 
     // GENERATE AI EXPLANATION
 
-    const explanation = await generateMovieExplanation(
-      query,
-      movies
-    );
+    const explanation = await generateMovieExplanation(query, movies);
 
     // FINAL RESPONSE
 
@@ -69,9 +64,39 @@ app.post("/search", async (req, res) => {
       totalResults: movies.length,
       movies,
     });
-
   } catch (error) {
+    console.log(error);
 
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
+// AI CHAT API
+
+app.post("/chat", async (req, res) => {
+  try {
+    const { message, conversation } = req.body;
+
+    if (!message) {
+      return res.status(400).json({
+        error: "Message is required",
+      });
+    }
+
+    console.log("Chat Message:", message);
+
+    // PROCESS CHAT
+
+    const response = await processChatMessage({
+      message,
+      conversation,
+      collection,
+    });
+
+    res.json(response);
+  } catch (error) {
     console.log(error);
 
     res.status(500).json({
@@ -83,7 +108,6 @@ app.post("/search", async (req, res) => {
 // HEALTH CHECK
 
 app.get("/", (req, res) => {
-
   res.json({
     success: true,
     message: "FindYourMovie API Running",

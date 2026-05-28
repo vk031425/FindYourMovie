@@ -48,7 +48,7 @@
   letter-spacing: -0.3px;
 }
 .navbar__logo-find {
-  color: var(--text-primary);
+  color: var(--text);
 }
 .navbar__logo-movie {
   color: var(--red);
@@ -65,14 +65,14 @@
   padding: 6px 16px;
   font-size: 15px;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   border-radius: 6px;
   position: relative;
   transition: color 0.2s;
   background: none;
 }
 .navbar__link:hover {
-  color: var(--text-primary);
+  color: var(--text);
 }
 .navbar__link--active {
   color: var(--red);
@@ -96,14 +96,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   border: 1px solid var(--border);
   transition: color 0.2s, border-color 0.2s, background 0.2s;
   flex-shrink: 0;
   background: none;
 }
 .navbar__theme:hover {
-  color: var(--text-primary);
-  border-color: var(--border-hover);
+  color: var(--text);
+  border-color: #3a3a3a;
   background: rgba(255,255,255,0.05);
 }

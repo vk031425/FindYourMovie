@@ -5,8 +5,8 @@ import React, {
 
 import Navbar from '../../components/Navbar'
 import Hero from '../../components/Hero'
-import AIExplanation from '../../components/AIExplanation'
 import MovieGrid from '../../components/MovieGrid'
+import ChatBot from '../../components/ChatBot/ChatBot'
 
 import API from '../../services/api'
 
@@ -22,9 +22,6 @@ export default function Home() {
   const [movies, setMovies] =
     useState([])
 
-  const [explanation, setExplanation] =
-    useState('')
-
   const [loading, setLoading] =
     useState(false)
 
@@ -35,9 +32,6 @@ export default function Home() {
     const savedMovies =
       localStorage.getItem('movies')
 
-    const savedExplanation =
-      localStorage.getItem('explanation')
-
     const savedQuery =
       localStorage.getItem('searchQuery')
 
@@ -45,13 +39,6 @@ export default function Home() {
 
       setMovies(
         JSON.parse(savedMovies)
-      )
-    }
-
-    if (savedExplanation) {
-
-      setExplanation(
-        savedExplanation
       )
     }
 
@@ -64,7 +51,7 @@ export default function Home() {
 
   }, [])
 
-  // SEARCH FUNCTION
+  // SEARCH FUNCTION (Hero search bar)
 
   const handleSearch = async (query) => {
 
@@ -86,27 +73,15 @@ export default function Home() {
       const fetchedMovies =
         response.data.movies || []
 
-      const fetchedExplanation =
-        response.data.explanation || ''
-
       // UPDATE STATE
 
       setMovies(fetchedMovies)
-
-      setExplanation(
-        fetchedExplanation
-      )
 
       // SAVE TO LOCAL STORAGE
 
       localStorage.setItem(
         'movies',
         JSON.stringify(fetchedMovies)
-      )
-
-      localStorage.setItem(
-        'explanation',
-        fetchedExplanation
       )
 
       localStorage.setItem(
@@ -120,14 +95,23 @@ export default function Home() {
 
       setMovies([])
 
-      setExplanation(
-        'Unable to fetch movie recommendations right now.'
-      )
-
     } finally {
 
       setLoading(false)
     }
+  }
+
+  // CHATBOT → UPDATE MOVIES ON HOME PAGE
+  // Called when chatbot gets SHOW_MOVIES action
+
+  const handleChatMoviesUpdate = (newMovies) => {
+
+    setMovies(newMovies)
+
+    localStorage.setItem(
+      'movies',
+      JSON.stringify(newMovies)
+    )
   }
 
   return (
@@ -163,18 +147,6 @@ export default function Home() {
               </p>
 
             </div>
-
-          )}
-
-          {/* AI EXPLANATION */}
-
-          {!loading &&
-            explanation && (
-
-            <AIExplanation
-              query={searchQuery}
-              explanation={explanation}
-            />
 
           )}
 
@@ -246,6 +218,15 @@ export default function Home() {
         </div>
 
       </footer>
+
+      {/* FLOATING AI CHATBOT */}
+      {/* Receives currentMovies so backend can resolve intents like "open second one" */}
+      {/* onMoviesUpdate updates the main movie grid for SHOW_MOVIES action */}
+
+      <ChatBot
+        currentMovies={movies}
+        onMoviesUpdate={handleChatMoviesUpdate}
+      />
 
     </div>
   )
