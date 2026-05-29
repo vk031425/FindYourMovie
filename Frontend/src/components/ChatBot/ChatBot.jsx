@@ -8,28 +8,12 @@ import "./ChatBot.css";
 
 // ============================================================
 // CHATBOT COMPONENT
-//
-// Props:
-//   currentMovies   – the movie list currently shown on Home
-//   onMoviesUpdate  – callback to update Home's movie grid
-//                     called on SHOW_MOVIES action
-//
-// Backend /chat response shape:
-//   {
-//     success: boolean,
-//     message: string,
-//     movies:  Movie[],          ← populated for SHOW_MOVIES only
-//     action: {
-//       type: "SHOW_MOVIES" | "OPEN_MOVIE" | "EXPLAIN_MOVIE" | "NONE",
-//       movieId?: number         ← present for OPEN_MOVIE / EXPLAIN_MOVIE
-//     }
-//   }
-//
-// Action handling:
-//   SHOW_MOVIES   → onMoviesUpdate(movies)  + add assistant message
-//   OPEN_MOVIE    → navigate(`/movie/${movieId}`)
-//   EXPLAIN_MOVIE → add assistant message only (no navigation)
+// Chat history persists across page navigation via sessionStorage
+// (clears automatically when browser tab/window is closed)
 // ============================================================
+
+const STORAGE_KEY = "chatbot_messages";
+const STORAGE_LAST_MOVIE = "chatbot_lastMovieId";
 
 const INITIAL_MESSAGE = {
   id: "init",
@@ -39,6 +23,28 @@ const INITIAL_MESSAGE = {
   movies: null,
 };
 
+// Load messages from sessionStorage, fall back to initial message
+function loadMessages() {
+  try {
+    const stored = sessionStorage.getItem(STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {
+    // ignore parse errors
+  }
+  return [INITIAL_MESSAGE];
+}
+
+// Load lastMovieId from sessionStorage
+function loadLastMovieId() {
+  try {
+    const stored = sessionStorage.getItem(STORAGE_LAST_MOVIE);
+    if (stored) return JSON.parse(stored);
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
 export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
   const navigate = useNavigate();
 
@@ -46,33 +52,44 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [messages, setMessages] = useState([INITIAL_MESSAGE]);
+  // Initialise from sessionStorage so history survives page navigation
+  const [messages, setMessages] = useState(loadMessages);
 
   const [input, setInput] = useState("");
 
   const [isTyping, setIsTyping] = useState(false);
 
-  // Track which movie the user last discussed
-  // Sent to backend as part of conversation context
-
-  const [lastMovieId, setLastMovieId] = useState(null);
+  const [lastMovieId, setLastMovieId] = useState(loadLastMovieId);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // ── EFFECTS ────────────────────────────────────────
+  // ── PERSIST TO SESSION STORAGE ─────────────────────
+  // Runs every time messages change — keeps sessionStorage in sync
 
-  // Auto-scroll to newest message
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    } catch {
+      // Ignore storage quota errors
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(STORAGE_LAST_MOVIE, JSON.stringify(lastMovieId));
+    } catch {
+      // Ignore
+    }
+  }, [lastMovieId]);
+
+  // ── EFFECTS ────────────────────────────────────────
 
   useEffect(() => {
     if (isOpen) {
-      messagesEndRef.current?.scrollIntoView({
-        behavior: "smooth",
-      });
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isOpen, isTyping]);
-
-  // Focus input when panel opens
 
   useEffect(() => {
     if (isOpen) {
@@ -86,10 +103,7 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
 
   const sendMessage = async () => {
     const trimmed = input.trim();
-
     if (!trimmed || isTyping) return;
-
-    // 1. Add user message to chat
 
     const userMsg = {
       id: Date.now(),
@@ -104,10 +118,6 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
     setIsTyping(true);
 
     try {
-      // 2. Call backend /chat
-      //    Send the current movies list so the backend can resolve
-      //    "open the second one" / "is this emotional?" correctly
-
       const response = await API.post("/chat", {
         message: trimmed,
         conversation: {
@@ -116,15 +126,9 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
         },
       });
 
-      const data = response.data;
-
-      // 3. Handle action returned by backend
-
-      await handleAction(data);
+      await handleAction(response.data);
     } catch (error) {
       console.error("Chat API error:", error);
-
-      // Graceful error message
 
       const errMsg = {
         id: Date.now() + 1,
@@ -146,15 +150,12 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
     const actionType = data?.action?.type;
     const movieId = data?.action?.movieId;
 
-    (console, log("ChatBot Action:", actionType, "Movie ID:", movieId));
+    console.log("ChatBot Action:", actionType, "Movie ID:", movieId);
 
     // ── SHOW_MOVIES ──────────────────────────────────
-    // Backend found movies → update Home grid + show message
 
     if (actionType === "SHOW_MOVIES") {
       const newMovies = data.movies || [];
-
-      // Update the main movie grid on Home page
 
       if (onMoviesUpdate && newMovies.length > 0) {
         onMoviesUpdate(newMovies);
@@ -165,14 +166,10 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
         role: "assistant",
         text: data.message || "Here are some movies you might enjoy!",
         time: formatTime(new Date()),
-        // Show compact movie chips inside the chat bubble
-
         movies: newMovies.length > 0 ? newMovies : null,
       };
 
       setMessages((prev) => [...prev, botMsg]);
-
-      // Update last movie context to first result
 
       if (newMovies[0]?.tmdbId) {
         setLastMovieId(newMovies[0].tmdbId);
@@ -182,14 +179,9 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
     }
 
     // ── OPEN_MOVIE ───────────────────────────────────
-    // Backend resolved which movie to open → navigate to details page
 
     if (actionType === "OPEN_MOVIE" && movieId) {
-      // Find full movie object from current list so we can pass state
-
       const movieObj = currentMovies.find((m) => m.tmdbId === movieId) || null;
-
-      // Brief chat message first, then navigate
 
       const botMsg = {
         id: Date.now() + 1,
@@ -200,23 +192,16 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
       };
 
       setMessages((prev) => [...prev, botMsg]);
-
       setLastMovieId(movieId);
 
-      // Short delay so user sees the message before navigating
-
       setTimeout(() => {
-        navigate(`/movie/${movieId}`, {
-          state: movieObj,
-        });
+        navigate(`/movie/${movieId}`, { state: movieObj });
       }, 600);
 
       return;
     }
 
     // ── EXPLAIN_MOVIE ────────────────────────────────
-    // Backend answered a question about a specific movie
-    // NO navigation — only add message to chat
 
     if (actionType === "EXPLAIN_MOVIE") {
       if (movieId) setLastMovieId(movieId);
@@ -230,7 +215,6 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
       };
 
       setMessages((prev) => [...prev, botMsg]);
-
       return;
     }
 
@@ -259,10 +243,17 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
   };
 
   // ── CLEAR CHAT ─────────────────────────────────────
+  // Also wipes sessionStorage so it stays in sync
 
   const clearChat = () => {
     setMessages([INITIAL_MESSAGE]);
     setLastMovieId(null);
+    try {
+      sessionStorage.removeItem(STORAGE_KEY);
+      sessionStorage.removeItem(STORAGE_LAST_MOVIE);
+    } catch {
+      // ignore
+    }
   };
 
   // ── RENDER ─────────────────────────────────────────
@@ -270,31 +261,25 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
   return (
     <>
       {/* FLOATING ACTION BUTTON */}
-
       <button
         className={`chatbot__fab ${isOpen ? "chatbot__fab--active" : ""}`}
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label="Open AI Movie Assistant"
       >
         {isOpen ? <CloseIcon /> : <RobotIcon />}
-
         {!isOpen && <span className="chatbot__fab-pulse" />}
       </button>
 
       {/* CHAT PANEL */}
-
       <div className={`chatbot__panel ${isOpen ? "chatbot__panel--open" : ""}`}>
         {/* HEADER */}
-
         <div className="chatbot__header">
           <div className="chatbot__header-left">
             <div className="chatbot__avatar">
               <RobotIcon size={22} />
             </div>
-
             <div>
               <h3 className="chatbot__header-title">AI Movie Assistant</h3>
-
               <span className="chatbot__header-status">
                 <span className="chatbot__status-dot" />
                 Online
@@ -310,7 +295,6 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
             >
               <TrashIcon />
             </button>
-
             <button
               className="chatbot__header-btn"
               onClick={() => setIsOpen(false)}
@@ -322,20 +306,16 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
         </div>
 
         {/* MESSAGES */}
-
         <div className="chatbot__messages">
           {messages.map((msg) => (
             <ChatMessage
               key={msg.id}
               msg={msg}
-              currentMovies={currentMovies}
               onMovieClick={(movie) => {
                 navigate(`/movie/${movie.tmdbId}`, { state: movie });
               }}
             />
           ))}
-
-          {/* TYPING INDICATOR */}
 
           {isTyping && (
             <div className="chatbot__message chatbot__message--assistant">
@@ -351,7 +331,6 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
         </div>
 
         {/* INPUT AREA */}
-
         <div className="chatbot__input-area">
           <input
             ref={inputRef}
@@ -363,7 +342,6 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
             onKeyDown={handleKeyDown}
             disabled={isTyping}
           />
-
           <button
             className={`chatbot__send ${input.trim() ? "chatbot__send--active" : ""}`}
             onClick={sendMessage}
@@ -379,23 +357,18 @@ export default function ChatBot({ currentMovies = [], onMoviesUpdate }) {
 }
 
 // ── CHAT MESSAGE ──────────────────────────────────────────────
-// Renders a single message bubble with optional movie chips
 
 function ChatMessage({ msg, onMovieClick }) {
   return (
     <div className={`chatbot__message chatbot__message--${msg.role}`}>
-      {/* BUBBLE */}
-
       <div className="chatbot__bubble">
         <p className="chatbot__bubble-text">{msg.text}</p>
-
-        {/* MOVIE CHIPS — only shown on SHOW_MOVIES */}
 
         {msg.movies && msg.movies.length > 0 && (
           <div className="chatbot__movies">
             {msg.movies.map((movie, i) => (
               <button
-                key={movie.tmdbId || i}
+                key={movie.tmdbId || movie._id || i}
                 className="chatbot__movie-chip"
                 onClick={() => onMovieClick(movie)}
                 title={`Open ${movie.title}`}
@@ -421,7 +394,6 @@ function ChatMessage({ msg, onMovieClick }) {
 
                 <span className="chatbot__movie-info">
                   <span className="chatbot__movie-name">{movie.title}</span>
-
                   {movie.genres && (
                     <span className="chatbot__movie-genre">
                       {movie.genres.split(",")[0].trim()}
@@ -434,8 +406,6 @@ function ChatMessage({ msg, onMovieClick }) {
         )}
       </div>
 
-      {/* TIMESTAMP */}
-
       <span className="chatbot__time">
         {msg.time}
         {msg.role === "user" && <span className="chatbot__ticks">✓✓</span>}
@@ -447,10 +417,7 @@ function ChatMessage({ msg, onMovieClick }) {
 // ── HELPERS ───────────────────────────────────────────────────
 
 function formatTime(date) {
-  return date.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
 // ── ICONS ─────────────────────────────────────────────────────
@@ -458,87 +425,25 @@ function formatTime(date) {
 function RobotIcon({ size = 24 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <rect
-        x="3"
-        y="8"
-        width="18"
-        height="13"
-        rx="3"
-        fill="currentColor"
-        opacity="0.15"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <rect
-        x="7"
-        y="3"
-        width="10"
-        height="7"
-        rx="2"
-        fill="currentColor"
-        opacity="0.15"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <line
-        x1="12"
-        y1="3"
-        x2="12"
-        y2="1"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
+      <rect x="3" y="8" width="18" height="13" rx="3" fill="currentColor" opacity="0.15" stroke="currentColor" strokeWidth="1.5" />
+      <rect x="7" y="3" width="10" height="7" rx="2" fill="currentColor" opacity="0.15" stroke="currentColor" strokeWidth="1.5" />
+      <line x1="12" y1="3" x2="12" y2="1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       <circle cx="12" cy="1" r="0.8" fill="currentColor" />
       <circle cx="9" cy="6.5" r="1.2" fill="currentColor" />
       <circle cx="15" cy="6.5" r="1.2" fill="currentColor" />
-      <rect
-        x="7"
-        y="13"
-        width="10"
-        height="5"
-        rx="1.5"
-        fill="currentColor"
-        opacity="0.2"
-        stroke="currentColor"
-        strokeWidth="1"
-      />
+      <rect x="7" y="13" width="10" height="5" rx="1.5" fill="currentColor" opacity="0.2" stroke="currentColor" strokeWidth="1" />
       <circle cx="9.5" cy="15.5" r="1" fill="currentColor" />
       <circle cx="12" cy="15.5" r="1" fill="currentColor" />
       <circle cx="14.5" cy="15.5" r="1" fill="currentColor" />
-      <rect
-        x="1"
-        y="10"
-        width="2"
-        height="6"
-        rx="1"
-        fill="currentColor"
-        opacity="0.5"
-      />
-      <rect
-        x="21"
-        y="10"
-        width="2"
-        height="6"
-        rx="1"
-        fill="currentColor"
-        opacity="0.5"
-      />
+      <rect x="1" y="10" width="2" height="6" rx="1" fill="currentColor" opacity="0.5" />
+      <rect x="21" y="10" width="2" height="6" rx="1" fill="currentColor" opacity="0.5" />
     </svg>
   );
 }
 
 function CloseIcon() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
       <line x1="18" y1="6" x2="6" y2="18" />
       <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
@@ -547,16 +452,7 @@ function CloseIcon() {
 
 function TrashIcon() {
   return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="3 6 5 6 21 6" />
       <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
       <path d="M10 11v6M14 11v6" />
@@ -567,16 +463,7 @@ function TrashIcon() {
 
 function SendIcon() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="22" y1="2" x2="11" y2="13" />
       <polygon points="22 2 15 22 11 13 2 9 22 2" />
     </svg>

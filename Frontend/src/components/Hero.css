@@ -37,13 +37,8 @@
   overflow: hidden;
   box-shadow: 0 16px 48px rgba(0,0,0,0.6);
 }
-
-.hero__poster:nth-child(even) {
-  transform: rotate(2deg) translateY(-12px);
-}
-.hero__poster:nth-child(3) {
-  transform: rotate(-1deg) translateY(8px);
-}
+.hero__poster:nth-child(even)  { transform: rotate(2deg) translateY(-12px); }
+.hero__poster:nth-child(3)     { transform: rotate(-1deg) translateY(8px); }
 
 .hero__poster-emoji {
   font-size: 52px;
@@ -64,7 +59,7 @@
   z-index: 1;
 }
 
-/* Dark overlay gradient */
+/* Overlay */
 .hero__overlay {
   position: absolute;
   inset: 0;
@@ -99,17 +94,15 @@
 
 .hero__title {
   font-family: var(--font-body);
-  font-size: clamp(36px, 5vw, 58px);
+  font-size: clamp(32px, 5vw, 58px);
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -1.5px;
-  color: var(--text);
+  color: var(--text-primary);
   margin-bottom: 16px;
 }
 
-.hero__title-accent {
-  color: var(--red);
-}
+.hero__title-accent { color: var(--red); }
 
 .hero__subtitle {
   font-size: 16px;
@@ -153,14 +146,12 @@
   background: none;
   border: none;
   outline: none;
-  color: var(--text);
+  color: var(--text-primary);
   font-size: 15px;
   font-family: var(--font-body);
 }
 
-.hero__input::placeholder {
-  color: var(--text-muted);
-}
+.hero__input::placeholder { color: var(--text-muted); }
 
 .hero__search-btn {
   display: flex;
@@ -185,9 +176,7 @@
   box-shadow: 0 6px 28px rgba(229,0,26,0.5);
 }
 
-.hero__search-btn:active {
-  transform: translateY(0);
-}
+.hero__search-btn:active { transform: translateY(0); }
 
 /* Suggestions */
 .hero__suggestions {
@@ -215,7 +204,48 @@
 }
 
 .hero__chip:hover {
-  color: var(--text);
+  color: var(--text-primary);
   border-color: #3a3a3a;
   background: rgba(255,255,255,0.08);
+}
+
+/* ── RESPONSIVE ── */
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 90px 20px 48px;
+    min-height: auto;
+  }
+
+  /* Hide poster strip on mobile — too cluttered */
+  .hero__posters { display: none; }
+
+  /* Remove overlay gradient — no posters to cover */
+  .hero__overlay {
+    background: linear-gradient(to bottom, rgba(10,10,10,0.3) 0%, transparent 100%);
+  }
+
+  .hero__content { max-width: 100%; }
+
+  .hero__subtitle br { display: none; }
+
+  .hero__search { flex-direction: column; gap: 8px; }
+
+  .hero__search-bar { height: 48px; }
+
+  .hero__search-btn {
+    height: 48px;
+    justify-content: center;
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  .hero__suggestions { gap: 6px; }
+
+  .hero__chip { font-size: 12px; padding: 5px 12px; }
+}
+
+@media (max-width: 480px) {
+  .hero { padding: 80px 16px 40px; }
+  .hero__title { letter-spacing: -0.8px; }
 }

@@ -13,12 +13,13 @@ export default async function processChatMessage({
 }) {
   try {
     // CURRENT MOVIES
-
     const currentMovies = conversation.currentMovies || [];
 
-    // DETECT MOVIE INTENT
+    // LAST MOVIE (for follow-up context)
+    const lastMovieId = conversation.lastMovieId || null;
 
-    const intent = detectMovieIntent(message, currentMovies);
+    // DETECT MOVIE INTENT
+    const intent = await detectMovieIntent(message, currentMovies, lastMovieId);
 
     // =========================
     // EXPLAIN MOVIE
@@ -73,11 +74,9 @@ export default async function processChatMessage({
     // =========================
 
     // GENERATE EMBEDDING
-
     const queryEmbedding = await getEmbedding(message);
 
     // VECTOR SEARCH
-
     const results = await collection.find(
       {},
       {
@@ -90,22 +89,19 @@ export default async function processChatMessage({
     );
 
     // CONVERT TO ARRAY
-
     const movies = await results.toArray();
 
     // GENERATE FRIENDLY AI RESPONSE
-
+    // (geminiService handles its own fallback internally)
     const aiMessage = await generateMovieExplanation(message, movies);
 
     // FINAL RESPONSE
-
     return {
       success: true,
 
       message: aiMessage,
 
       // ONLY SEARCH RETURNS MOVIES
-
       movies,
 
       action: {
@@ -113,12 +109,12 @@ export default async function processChatMessage({
       },
     };
   } catch (error) {
-    console.log(error);
+    console.log("Chat Service Error:", error);
 
     return {
       success: false,
 
-      message: "Something went wrong while searching movies.",
+      message: "Hmm, something went wrong on my end 🎬 Try asking again in a moment!",
 
       movies: [],
 

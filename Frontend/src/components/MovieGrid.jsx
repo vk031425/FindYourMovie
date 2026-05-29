@@ -128,7 +128,7 @@ export default function MovieGrid({ movies = DEFAULT_MOVIES }) {
       <div className="movie-grid__scroll-wrapper">
         <div className="movie-grid__row" ref={scrollRef}>
           {movies.map((movie, i) => (
-            <MovieCard key={movie.id} movie={movie} rank={i + 1} />
+            <MovieCard key={movie.tmdbId || movie._id || movie.id || i} movie={movie} rank={i + 1} />
           ))}
         </div>
 

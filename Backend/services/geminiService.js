@@ -4,20 +4,71 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 dotenv.config();
 
-// GEMINI SETUP
-
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const model = genAI.getGenerativeModel({
   model: "gemini-2.5-flash",
 });
 
-// GENERATE FRIENDLY AI RESPONSE
+// =========================
+// FALLBACK RESPONSE
+// Used when Gemini is down
+// Builds a clean response from movie data alone
+// =========================
+
+function buildFallbackSearchResponse(query, movies) {
+  if (!movies || movies.length === 0) {
+    return "I couldn't find any movies matching that. Try a different search! 🎬";
+  }
+
+  const lower = query.toLowerCase();
+
+  // Pick the most relevant intro line based on query keywords
+  let intro = "Here are some movies you might enjoy 🎬";
+
+  if (lower.includes("action"))
+    intro = "Here are some action-packed picks for you 💥";
+  else if (lower.includes("horror") || lower.includes("scary"))
+    intro = "These ones should give you a good scare 👻";
+  else if (lower.includes("comedy") || lower.includes("funny"))
+    intro = "These should get you laughing 😄";
+  else if (
+    lower.includes("sad") ||
+    lower.includes("emotional") ||
+    lower.includes("cry")
+  )
+    intro = "These ones might hit you right in the feels 🥺";
+  else if (
+    lower.includes("romantic") ||
+    lower.includes("romance") ||
+    lower.includes("love")
+  )
+    intro = "Here are some great picks for a movie night ❤️";
+  else if (lower.includes("animated") || lower.includes("animation"))
+    intro = "Here are some great animated films 🎨";
+  else if (lower.includes("superhero"))
+    intro = "Suiting up — here are your superhero picks 🦸";
+
+  // List top 3 movies cleanly
+  const topMovies = movies.slice(0, 3);
+  const movieLines = topMovies
+    .map((m) => {
+      const year = m.releaseDate ? m.releaseDate.split("-")[0] : null;
+      const rating = m.imdbRating ? ` · ⭐ ${m.imdbRating}` : "";
+      return `**${m.title}**${year ? ` (${year})` : ""}${rating} — ${m.genres}`;
+    })
+    .join("\n\n");
+
+  return `${intro}\n\n${movieLines}`;
+}
+
+// =========================
+// MAIN FUNCTION
+// =========================
 
 async function generateMovieExplanation(query, movies) {
   try {
     // FORMAT MOVIE CONTEXT
-
     const movieContext = movies
       .map((movie, index) => {
         return `
@@ -33,7 +84,6 @@ Overview: ${movie.overview}
       .join("\n");
 
     // FRIENDLY CONVERSATIONAL PROMPT
-
     const prompt = `
 You are FindYourMovie AI.
 
@@ -70,25 +120,19 @@ BAD RESPONSE EXAMPLE:
 Now generate the response.
 `;
 
-    // GEMINI RESPONSE
+    // GEMINI RESPONSE (with timeout)
+    const geminiPromise = model.generateContent(prompt);
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Gemini timeout")), 15000),
+    );
 
-    const result = await model.generateContent(prompt);
-
-    const response = result.response.text();
-
-    return response.trim();
+    const result = await Promise.race([geminiPromise, timeoutPromise]);
+    return result.response.text().trim();
   } catch (error) {
-    console.log("Gemini Error:", error.message);
+    console.log("Gemini Service — unavailable, using fallback:", error.message);
 
-    // FALLBACK RESPONSE
-
-    return `
-I found some movies that match your vibe 🎬
-
-You might enjoy ${
-      movies[0]?.title || "these recommendations"
-    } if you're looking for something similar to your request.
-`;
+    // FALLBACK: build response from movie data
+    return buildFallbackSearchResponse(query, movies);
   }
 }
 
